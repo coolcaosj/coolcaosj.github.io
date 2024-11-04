@@ -16,7 +16,7 @@
 <meta property="og:image" content="https://mjj.today/i/jw20uN">
 <meta property="og:image" content="https://mjj.today/i/jw2rYX">
 <meta property="article:published_time" content="2024-11-01T08:43:12.000Z">
-<meta property="article:modified_time" content="2024-11-01T09:33:07.414Z">
+<meta property="article:modified_time" content="2024-11-04T01:45:23.577Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://mjj.today/i/jw20uN">
@@ -134,7 +134,7 @@
 <p>其余的留空就好。</p>
 <h3 id="配置hexo"><a href="#配置hexo" class="headerlink" title="配置hexo"></a>配置hexo</h3><p>进入<code>myblog</code>目录，然后编辑<code>_config.yml</code>文件。</p>
 <p>在文件中找到<code>deploy</code>这一行，将其修改为如下内容：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">https://github.com/coolcaosj/coolcaosj.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">gh-pages</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">git@github-sj.com:coolcaosj/coolcaosj.github.io.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">gh-pages</span></span><br></pre></td></tr></table></figure>
 
 <p>这里的<code>repo</code>是我们的github仓库的地址，<code>branch</code>是我们的分支名。<br>ropo在创建完github仓库后，会自动生成并显示，或者也可以在仓库的设置中找到。</p>
 <h3 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h3><p>使用<code>hexo deploy</code>命令来部署。<br>部署之前，需要先安装<code>hexo-deployer-git</code>插件。</p>
@@ -144,6 +144,13 @@
 <blockquote>
 <p>注意：<br>配置文件里 repo 使用https协议时需要每次部署时到输入用户名和密码，如果想部署时不再输入用户名和密码，可以使用git协议。<br>使用git协议时需要在本地生成ssh key，然后将ssh key添加到github的ssh keys中。<br>这个操作我会在后面的文章中详细介绍。</p>
 </blockquote>
+<p>部署完成后，我们就可以通过 <code>username.github.io</code> 来访问我们的博客了。</p>
+<h3 id="备注"><a href="#备注" class="headerlink" title="备注"></a>备注</h3><ol>
+<li>现在github已不支持在推送代码时使用用户名和密码来进行验证，所以需要配置ssh key，然后将ssh key添加到github的ssh keys中。</li>
+<li>相应的，配置文件里的 repo 也需要使用git协议。</li>
+<li>我们配置的deploy的branch是gh-pages。这个项目起始推送的是编译后的可供访问的编译后的静态文件。</li>
+<li>如果博客的源码（即markdown）文件也许要在github上进行管理，那么可以将源码文件作为另一个项目也推送到github上。</li>
+</ol>
 
       
     </div>
