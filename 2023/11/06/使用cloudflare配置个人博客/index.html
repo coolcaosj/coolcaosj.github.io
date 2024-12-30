@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/asciinema.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Cloudflare是一个全球知名的网络服务提供商，它提供了一系列的网络服务，用户可以免费注册，并拥有一定的免费额度可以使用。其中 Workers &amp; Pages 就可以为我们提供免费的网络托管服务，可以部署静态资源以及动态的workers服务。 在github pages部署hexo个人博客这篇博客中，我们使用github pages部署了hexo生成的静态博客，但是github pa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用cloudflare配置个人博客">
+<meta property="og:url" content="http://example.com/2023/11/06/%E4%BD%BF%E7%94%A8cloudflare%E9%85%8D%E7%BD%AE%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/index.html">
+<meta property="og:site_name" content="技多不压身">
+<meta property="og:description" content="Cloudflare是一个全球知名的网络服务提供商，它提供了一系列的网络服务，用户可以免费注册，并拥有一定的免费额度可以使用。其中 Workers &amp; Pages 就可以为我们提供免费的网络托管服务，可以部署静态资源以及动态的workers服务。 在github pages部署hexo个人博客这篇博客中，我们使用github pages部署了hexo生成的静态博客，但是github pa">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2024/11/06/j6z3hixufLqtK87.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/06/tugV4O5GeE93m2L.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/06/fqRp6yZ7sFiNWIt.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/06/azyNAjF8SH2bZ1Q.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/06/81QBumFG75ctRUJ.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/06/81QBumFG75ctRUJ.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/06/UXgwroOIivNmYSK.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/06/a8NH4wPOWXSEyVf.png">
+<meta property="article:published_time" content="2023-11-06T02:41:19.000Z">
+<meta property="article:modified_time" content="2024-11-13T12:48:13.454Z">
+<meta property="article:author" content="coolcaosj">
+<meta property="article:tag" content="cloudflare">
+<meta property="article:tag" content="自建博客">
+<meta property="article:tag" content="博客">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2024/11/06/j6z3hixufLqtK87.png">
+
+<link rel="canonical" href="http://example.com/2023/11/06/%E4%BD%BF%E7%94%A8cloudflare%E9%85%8D%E7%BD%AE%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>使用cloudflare配置个人博客 | 技多不压身</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">技多不压身</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">分享，记录，总结</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/06/%E4%BD%BF%E7%94%A8cloudflare%E9%85%8D%E7%BD%AE%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="coolcaosj">
+      <meta itemprop="description" content="分享好玩的，有趣的，有用东西">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="技多不压身">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用cloudflare配置个人博客
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-11-06 10:41:19" itemprop="dateCreated datePublished" datetime="2023-11-06T10:41:19+08:00">2023-11-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-13 20:48:13" itemprop="dateModified" datetime="2024-11-13T20:48:13+08:00">2024-11-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" itemprop="url" rel="index"><span itemprop="name">技术分享</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://s2.loli.net/2024/11/06/j6z3hixufLqtK87.png" alt="image.png"></p>
+<p>Cloudflare是一个全球知名的网络服务提供商，它提供了一系列的网络服务，用户可以免费注册，并拥有一定的免费额度可以使用。<br>其中 <code>Workers &amp; Pages</code> 就可以为我们提供免费的网络托管服务，可以部署静态资源以及动态的workers服务。</p>
+<p>在<a href="/2023/11/01/%E4%BD%BF%E7%94%A8github-pages%E9%83%A8%E7%BD%B2hexo%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" title="使用github-pages部署hexo个人博客">github pages部署hexo个人博客</a>这篇博客中，我们使用github pages部署了hexo生成的静态博客，但是github pages服务只能部署静态资源，不能部署一些动态服务，如果需要部署一些更灵活的动态服务，我们可以选用cloudflare的pages服务。</p>
+<span id="more"></span>
+
+<p>本篇博客，我将介绍如何使用cloudflare的pages服务来部署我们的hexo博客，借此来体验一下cloudflare的pages服务。</p>
+<h2 id="注册cloudflare账户"><a href="#注册cloudflare账户" class="headerlink" title="注册cloudflare账户"></a>注册cloudflare账户</h2><p>首先我们需要注册一个cloudflare帐号，可以从<a target="_blank" rel="noopener" href="https://www.cloudflare.com/">cloudflare官网</a>注册。<br>可以使用邮箱注册或者直接使用谷歌帐号登录也可。<br>注册完成后直接登录，就可以看到如下界面：</p>
+<p><img src="https://s2.loli.net/2024/11/06/tugV4O5GeE93m2L.png" alt="image.png"></p>
+<h2 id="部署pages"><a href="#部署pages" class="headerlink" title="部署pages"></a>部署pages</h2><p>左侧目录是cloudflare为我们提供的具体服务分类，我们本次要使用的是 <code>Workers 和 Pages</code> 服务，点击进入。</p>
+<p><img src="https://s2.loli.net/2024/11/06/fqRp6yZ7sFiNWIt.png" alt="image.png"></p>
+<p>点击创建按钮，进入创建页面。</p>
+<p><img src="https://s2.loli.net/2024/11/06/azyNAjF8SH2bZ1Q.png" alt="image.png"></p>
+<p>这里我们选择 <code>Pages</code> 服务，来创建Pages服务。然后点击 <code>连接到git</code> 按钮。</p>
+<p><img src="https://s2.loli.net/2024/11/06/81QBumFG75ctRUJ.png" alt="image.png"></p>
+<p>cloudflare支持github和gitlab，这里我们选择github，连接到github。</p>
+<p>如果之前没有连接过github会先进入连接github页面进行授权，授权完成后，会列出github帐号以及github下的仓库。</p>
+<p><img src="https://s2.loli.net/2024/11/06/81QBumFG75ctRUJ.png" alt="image.png"></p>
+<p>在<a href="/2023/11/01/%E4%BD%BF%E7%94%A8github-pages%E9%83%A8%E7%BD%B2hexo%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" title="使用github-pages部署hexo个人博客">github pages部署hexo个人博客</a>这篇博客中我们创建了一个名为 <code>username.github.io</code> 的仓库，用来部署我们的github pages博客，这个仓库起始就是hexo生成的静态博客，这里我们只需要将其连接过来，选择这个项目即可。</p>
+<p>选择项目后，点击开始设置按钮，进入设置页面。</p>
+<p><img src="https://s2.loli.net/2024/11/06/UXgwroOIivNmYSK.png" alt="image.png"></p>
+<p>这里设置项目的基本信息，最重要的就是项目名称了，这个名称，就是我们部署完成后访问二级域名的前缀，所以这里最好设置一个简短，对自己有明确意义的名称。</p>
+<p>其余的保持默认即可。然后点击保存并部署按钮，开始部署，然后等待部署完成即可。</p>
+<p><img src="https://s2.loli.net/2024/11/06/a8NH4wPOWXSEyVf.png" alt="image.png"></p>
+<p>当看到如上的界面时，就说明部署成功了。我们可以点击页面中的链接，来访问我们的博客了。</p>
+<blockquote>
+<p>初次部署，可能会有一些延迟，如果链接打不开，可以等待几分钟再试。</p>
+</blockquote>
+<h2 id="后话"><a href="#后话" class="headerlink" title="后话"></a>后话</h2><p>本篇博客中，我们使用cloudflare的pages服务来部署我们的hexo博客，体验了一下cloudflare的pages服务。<br>但实际上，cloudflare的pages服务的能力不仅仅是部署静态博客，还可以部署一些动态服务，比如自己用代码实现的一些动态服务，或者github上搜索的一些基于cloudflare的服务，后面有机会我会找一些有意思的项目来介绍并部署一下。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/cloudflare/" rel="tag"># cloudflare</a>
+              <a href="/tags/%E8%87%AA%E5%BB%BA%E5%8D%9A%E5%AE%A2/" rel="tag"># 自建博客</a>
+              <a href="/tags/%E5%8D%9A%E5%AE%A2/" rel="tag"># 博客</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/11/05/%E9%85%8D%E7%BD%AEhexo%E5%8D%9A%E5%AE%A2%E4%B8%BB%E9%A2%98/" rel="prev" title="配置hexo博客主题">
+      <i class="fa fa-chevron-left"></i> 配置hexo博客主题
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/11/06/%E4%BD%BF%E7%94%A8cloudflare%E5%92%8Ctelegraph-image%E6%90%AD%E5%BB%BA%E5%85%8D%E8%B4%B9%E6%97%A0%E9%99%90%E7%9A%84%E5%9B%BE%E5%BA%8A/" rel="next" title="使用cloudflare和telegraph-image搭建免费无限的图床">
+      使用cloudflare和telegraph-image搭建免费无限的图床 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%A8%E5%86%8Ccloudflare%E8%B4%A6%E6%88%B7"><span class="nav-number">1.</span> <span class="nav-text">注册cloudflare账户</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2pages"><span class="nav-number">2.</span> <span class="nav-text">部署pages</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8E%E8%AF%9D"><span class="nav-number">3.</span> <span class="nav-text">后话</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">coolcaosj</p>
+  <div class="site-description" itemprop="description">分享好玩的，有趣的，有用东西</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcaosj</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/asciinema.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

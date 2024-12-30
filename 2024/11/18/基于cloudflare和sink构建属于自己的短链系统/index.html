@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/asciinema.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="之前我们已经使用Cloudflare部署过自己的博客和图床工具， 本篇博客中，我们再部署一个短链系统sink。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于cloudflare和sink构建属于自己的短链系统">
+<meta property="og:url" content="http://example.com/2024/11/18/%E5%9F%BA%E4%BA%8Ecloudflare%E5%92%8Csink%E6%9E%84%E5%BB%BA%E5%B1%9E%E4%BA%8E%E8%87%AA%E5%B7%B1%E7%9A%84%E7%9F%AD%E9%93%BE%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="技多不压身">
+<meta property="og:description" content="之前我们已经使用Cloudflare部署过自己的博客和图床工具， 本篇博客中，我们再部署一个短链系统sink。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2024/11/18/GxQ2Vl8JqZu1O7N.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/18/DkRCjeqdJGL2tS7.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/18/H8tKDfyJ3sYAhU7.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/18/3N95ancXiAy7ero.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/18/KfjkaTH48DyAZc3.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/18/z9WecLuA1jRMbCD.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/18/wTVu7OlWfJGMKbi.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/18/zhlRJMpwE2kBfa4.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/18/FSam4qDvCunWf9j.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/18/Rmd1gTlLsip9xwQ.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/18/A5pC8B7kP2TfhoR.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/18/RV2q8mnIwN4uDGB.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/18/6xeop4EmvsXbHwW.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/18/dXbM5F9i1ZDNYSh.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/18/wQtR4AEJVF9mbxZ.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/18/zXxk7AdGpseugJR.png">
+<meta property="article:published_time" content="2024-11-18T07:48:32.000Z">
+<meta property="article:modified_time" content="2024-11-29T14:19:52.779Z">
+<meta property="article:author" content="coolcaosj">
+<meta property="article:tag" content="cloudflare">
+<meta property="article:tag" content="白嫖">
+<meta property="article:tag" content="免费">
+<meta property="article:tag" content="短链">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2024/11/18/GxQ2Vl8JqZu1O7N.png">
+
+<link rel="canonical" href="http://example.com/2024/11/18/%E5%9F%BA%E4%BA%8Ecloudflare%E5%92%8Csink%E6%9E%84%E5%BB%BA%E5%B1%9E%E4%BA%8E%E8%87%AA%E5%B7%B1%E7%9A%84%E7%9F%AD%E9%93%BE%E7%B3%BB%E7%BB%9F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>基于cloudflare和sink构建属于自己的短链系统 | 技多不压身</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">技多不压身</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">分享，记录，总结</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/18/%E5%9F%BA%E4%BA%8Ecloudflare%E5%92%8Csink%E6%9E%84%E5%BB%BA%E5%B1%9E%E4%BA%8E%E8%87%AA%E5%B7%B1%E7%9A%84%E7%9F%AD%E9%93%BE%E7%B3%BB%E7%BB%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="coolcaosj">
+      <meta itemprop="description" content="分享好玩的，有趣的，有用东西">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="技多不压身">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基于cloudflare和sink构建属于自己的短链系统
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-11-18 15:48:32" itemprop="dateCreated datePublished" datetime="2024-11-18T15:48:32+08:00">2024-11-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-29 22:19:52" itemprop="dateModified" datetime="2024-11-29T22:19:52+08:00">2024-11-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E4%BA%AB/" itemprop="url" rel="index"><span itemprop="name">技术分享</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://s2.loli.net/2024/11/18/GxQ2Vl8JqZu1O7N.png"></p>
+<p>之前我们已经使用Cloudflare部署过自己的博客和图床工具， 本篇博客中，我们再部署一个短链系统sink。</p>
+<span id="more"></span>
+
+<h2 id="什么是短链系统"><a href="#什么是短链系统" class="headerlink" title="什么是短链系统"></a>什么是短链系统</h2><p>短链系统（Short Link System）是一种通过将长URL转换为短链接的服务，使得用户可以更方便地分享链接，减少字符数量，提高链接的美观性和易读性。短链系统通常包括以下功能：</p>
+<ul>
+<li>URL缩短： 将长URL转换为短链接，通常是通过算法生成一串短码或自定义别名。</li>
+<li>访问跟踪： 统计短链接的点击次数、访问来源等信息，帮助用户了解链接的流量情况。</li>
+<li>自定义别名： 允许用户设置自定义的短链接别名，使得短链接更易记。</li>
+<li>过期设置： 可以设置短链接的有效期，到期后链接失效。</li>
+<li>API支持： 提供API接口，方便开发者集成短链服务到自己的应用程序中。</li>
+</ul>
+<p>sink是一个在github上开源的，可以部署到cloudflare pages的短链系统，这对于想拥有自己的短链系统人来说，是一个不错的选择。</p>
+<h2 id="sink部署"><a href="#sink部署" class="headerlink" title="sink部署"></a>sink部署</h2><h3 id="fork代码"><a href="#fork代码" class="headerlink" title="fork代码"></a>fork代码</h3><p>首先需要将代码fork到自己的github帐号下。<br>sink的github仓库地址为： <a target="_blank" rel="noopener" href="https://github.com/ccbikai/sink">https://github.com/ccbikai/sink</a></p>
+<p>登录到自己的github帐号后，打开sink的github链接，然后点击fork按钮，将其fork到自己的帐号下。</p>
+<h3 id="部署到cloudflare-pages"><a href="#部署到cloudflare-pages" class="headerlink" title="部署到cloudflare pages"></a>部署到cloudflare pages</h3><p>fork完成后，打开自己的cloudflare，然后创建pages。</p>
+<p><img src="https://s2.loli.net/2024/11/18/DkRCjeqdJGL2tS7.png"></p>
+<p>连接到github后，选择刚才已fork的sink项目：</p>
+<p><img src="https://s2.loli.net/2024/11/18/H8tKDfyJ3sYAhU7.png"></p>
+<p>然后进入设置页面。<br>这里框架预设选择Nuxt.js。<br>然后在环境变量下添加三个环境变量：</p>
+<ul>
+<li>NUXT_SITE_TOKEN： 必须超过8个字符。此令牌授予您访问仪表板的权限。</li>
+<li>NUXT_CF_ACCOUNT_ID: cf帐号id</li>
+<li>NUXT_CF_API_TOKEN: cf帐号api token</li>
+</ul>
+<p><img src="https://s2.loli.net/2024/11/18/3N95ancXiAy7ero.png"></p>
+<blockquote>
+<p>NUXT_CF_ACCOUNT_ID和NUXT_CF_API_TOKEN如何找？<br>NUXT_CF_ACCOUNT_ID: 回到cloudflare首页，选择自己的网站域名，打开概述页面，在该页面的右下角部分会找到该id<br><img src="https://s2.loli.net/2024/11/18/KfjkaTH48DyAZc3.png"><br>同样，NUXT_CF_API_TOKEN也是从该页面的获取您的api令牌创建。</p>
+</blockquote>
+<p>设置完成后，点击部署，进入部署页面，等待几分钟即可部署完成。</p>
+<p>部署完成后，再等待个两三分钟，即可打开链接查看页面了。</p>
+<p><img src="https://s2.loli.net/2024/11/18/z9WecLuA1jRMbCD.png"></p>
+<p>首页大致如上所示。接下来我们做一些简单的设置，开启短链分析功能。</p>
+<h3 id="绑定KV"><a href="#绑定KV" class="headerlink" title="绑定KV"></a>绑定KV</h3><p>首先，我们进入cloudflare首页，点击 <code>workers &amp; pages</code> 菜单下的 <code>KV</code> 选项：<br><img src="https://s2.loli.net/2024/11/18/wTVu7OlWfJGMKbi.png"><br>这里我们创建一个新的KV命名空间，命名为<code>sink</code>即可。</p>
+<p>然后返回刚才部署的sink项目，点击设置，并选择<code>绑定</code>，将刚才创建的KV绑定过来：</p>
+<p><img src="https://s2.loli.net/2024/11/18/zhlRJMpwE2kBfa4.png"></p>
+<p><img src="https://s2.loli.net/2024/11/18/FSam4qDvCunWf9j.png"></p>
+<p>变量名称为<code>KV</code>，绑定的命名空间即为刚才创建的<code>sink</code>，然后点击保存。</p>
+<h3 id="开启分析引擎并绑定"><a href="#开启分析引擎并绑定" class="headerlink" title="开启分析引擎并绑定"></a>开启分析引擎并绑定</h3><p>回到cloudflare首页，点击<code>workers &amp; pages</code>，然后在页面的右侧，有一个分析引擎的选项：<br><img src="https://s2.loli.net/2024/11/18/Rmd1gTlLsip9xwQ.png"></p>
+<p>在这里查看分析引擎是否已开启，如果没有开启，则先开启分析引擎。</p>
+<p>开启分析引擎后，再次进入部署的项目，点击设置下的绑定选项，来进行分析引擎的绑定：</p>
+<p><img src="https://s2.loli.net/2024/11/18/A5pC8B7kP2TfhoR.png"></p>
+<p>绑定一个分析引擎，名称为 <code>ANALYTICS</code>， 值为 <code>sink</code>，然后保存即可。</p>
+<h3 id="重新部署"><a href="#重新部署" class="headerlink" title="重新部署"></a>重新部署</h3><p>绑定完KV和分析引擎后，我们就可以重新部署项目，以使绑定生效。</p>
+<h2 id="sink基本使用"><a href="#sink基本使用" class="headerlink" title="sink基本使用"></a>sink基本使用</h2><p>重新部署完成后，打开链接进入首页。<br>点击右上角的 Dashboard 进入管理后台页面。</p>
+<p><img src="https://s2.loli.net/2024/11/18/RV2q8mnIwN4uDGB.png"></p>
+<p>这里的登录token就是我们在部署时设置的<code>NUXT_SITE_TOKEN</code>变量，输入即可进入管理后台。</p>
+<p><img src="https://s2.loli.net/2024/11/18/6xeop4EmvsXbHwW.png"></p>
+<p>整个页面比较简洁，左上角的 <code>Links</code> 和 <code>Analysis</code> 标签分别是链接和分析两个功能标签页，点击可切换。</p>
+<p>右上角这个<code>Create Link</code>按钮是创建短链的按钮。</p>
+<p>下面这个区域是创建的短链的列表。</p>
+<h3 id="创建短链"><a href="#创建短链" class="headerlink" title="创建短链"></a>创建短链</h3><p>我们先点击<code>Create Link</code>按钮来创建一个短链。<br><img src="https://s2.loli.net/2024/11/18/dXbM5F9i1ZDNYSh.png"><br>url和slug是必填的，url就是要缩短的链接，slug是短链标识，可以自己填写，也可以让系统自动生成。<br>下面的Comment和Expiration是可选的备注和有效期，可填可不填，根据需要来定。</p>
+<p>这里我们将sink项目的github地址填进去，会生成一个短链 <a target="_blank" rel="noopener" href="https://sink-demo.pages.dev/tnhw6q">https://sink-demo.pages.dev/tnhw6q</a>。</p>
+<h3 id="短链分析"><a href="#短链分析" class="headerlink" title="短链分析"></a>短链分析</h3><p>在sink系统里生成的短链，我们可以点击 <code>Analysis</code> 标签页来查看其链接的分析功能。<br><img src="https://s2.loli.net/2024/11/18/wQtR4AEJVF9mbxZ.png"><br>这个页面会分析出我们创建的短链被访问的次数，以及访问者的ip，国家，设备，系统等等几本信息，可以有助于我们对在业务中对数据进行调优。</p>
+<h2 id="自定义域名"><a href="#自定义域名" class="headerlink" title="自定义域名"></a>自定义域名</h2><p>由于我们部署完后，使用的是cloudflare提供的二级域名，在观感上也不是很短，如果你有自己的域名，可以将其绑定到项目。</p>
+<p><img src="https://s2.loli.net/2024/11/18/zXxk7AdGpseugJR.png"><br>进入部署的项目，点击<code>自定义域</code>，然后在这里设置自定义域名即可，设置完成后就可以通过自己的域名来访问sink系统了。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/cloudflare/" rel="tag"># cloudflare</a>
+              <a href="/tags/%E7%99%BD%E5%AB%96/" rel="tag"># 白嫖</a>
+              <a href="/tags/%E5%85%8D%E8%B4%B9/" rel="tag"># 免费</a>
+              <a href="/tags/%E7%9F%AD%E9%93%BE/" rel="tag"># 短链</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/11/07/asciinema/" rel="prev" title="asciinema">
+      <i class="fa fa-chevron-left"></i> asciinema
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/11/27/%E5%8F%AF%E4%BB%A5%E7%99%BD%E5%AB%96%E7%9A%84%E5%9B%BE%E5%BA%8A%E5%B7%A5%E5%85%B7/" rel="next" title="可以白嫖的图床工具">
+      可以白嫖的图床工具 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%9F%AD%E9%93%BE%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.</span> <span class="nav-text">什么是短链系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sink%E9%83%A8%E7%BD%B2"><span class="nav-number">2.</span> <span class="nav-text">sink部署</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#fork%E4%BB%A3%E7%A0%81"><span class="nav-number">2.1.</span> <span class="nav-text">fork代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E5%88%B0cloudflare-pages"><span class="nav-number">2.2.</span> <span class="nav-text">部署到cloudflare pages</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%91%E5%AE%9AKV"><span class="nav-number">2.3.</span> <span class="nav-text">绑定KV</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%90%AF%E5%88%86%E6%9E%90%E5%BC%95%E6%93%8E%E5%B9%B6%E7%BB%91%E5%AE%9A"><span class="nav-number">2.4.</span> <span class="nav-text">开启分析引擎并绑定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%96%B0%E9%83%A8%E7%BD%B2"><span class="nav-number">2.5.</span> <span class="nav-text">重新部署</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sink%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">sink基本使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%9F%AD%E9%93%BE"><span class="nav-number">3.1.</span> <span class="nav-text">创建短链</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9F%AD%E9%93%BE%E5%88%86%E6%9E%90"><span class="nav-number">3.2.</span> <span class="nav-text">短链分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%9F%9F%E5%90%8D"><span class="nav-number">4.</span> <span class="nav-text">自定义域名</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">coolcaosj</p>
+  <div class="site-description" itemprop="description">分享好玩的，有趣的，有用东西</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcaosj</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/asciinema.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

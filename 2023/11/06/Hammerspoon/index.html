@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/asciinema.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="之前在Mac平台上找窗口管理软件，有些软件是收费的，有些软件设置比较麻烦，有些功能又有限，在无意当中找到一款名为Hammerspoon的软件，它可以让我们在Mac平台上实现窗口管理，并且非常简单易用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hammerspoon">
+<meta property="og:url" content="http://example.com/2023/11/06/Hammerspoon/index.html">
+<meta property="og:site_name" content="技多不压身">
+<meta property="og:description" content="之前在Mac平台上找窗口管理软件，有些软件是收费的，有些软件设置比较麻烦，有些功能又有限，在无意当中找到一款名为Hammerspoon的软件，它可以让我们在Mac平台上实现窗口管理，并且非常简单易用。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2024/11/06/p2HZb9GnRO8zADQ.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/06/znmAKTgJMqUQ6sR.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/06/yZcKoExG6whftC8.png">
+<meta property="article:published_time" content="2023-11-06T08:38:12.000Z">
+<meta property="article:modified_time" content="2024-11-13T12:48:13.453Z">
+<meta property="article:author" content="coolcaosj">
+<meta property="article:tag" content="软件">
+<meta property="article:tag" content="效率">
+<meta property="article:tag" content="窗口管理">
+<meta property="article:tag" content="mac软件">
+<meta property="article:tag" content="免费软件">
+<meta property="article:tag" content="开源">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2024/11/06/p2HZb9GnRO8zADQ.png">
+
+<link rel="canonical" href="http://example.com/2023/11/06/Hammerspoon/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Hammerspoon | 技多不压身</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">技多不压身</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">分享，记录，总结</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/06/Hammerspoon/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="coolcaosj">
+      <meta itemprop="description" content="分享好玩的，有趣的，有用东西">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="技多不压身">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hammerspoon
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-11-06 16:38:12" itemprop="dateCreated datePublished" datetime="2023-11-06T16:38:12+08:00">2023-11-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-13 20:48:13" itemprop="dateModified" datetime="2024-11-13T20:48:13+08:00">2024-11-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%BD%AF%E4%BB%B6%E6%8E%A8%E8%8D%90/" itemprop="url" rel="index"><span itemprop="name">软件推荐</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://s2.loli.net/2024/11/06/p2HZb9GnRO8zADQ.png"></p>
+<p>之前在Mac平台上找窗口管理软件，有些软件是收费的，有些软件设置比较麻烦，有些功能又有限，在无意当中找到一款名为Hammerspoon的软件，它可以让我们在Mac平台上实现窗口管理，并且非常简单易用。</p>
+<span id="more"></span>
+
+<h2 id="什么是Hammerspoon"><a href="#什么是Hammerspoon" class="headerlink" title="什么是Hammerspoon"></a>什么是Hammerspoon</h2><blockquote>
+<p>Hammerspoon是一款开源的macOS应用程序，它允许用户通过编写Lua脚本来自定义和自动化他们的macOS环境。Hammerspoon提供了丰富的功能，包括窗口管理、键盘快捷键、鼠标手势、自动化脚本等，使用户能够更高效地使用macOS。</p>
+<p>用户可以编写 Lua 代码，以便与应用程序、窗口、鼠标指针、文件系统对象、音频设备、电池、屏幕、低级键盘&#x2F;鼠标事件、剪贴板、位置服务、wifi 等的 macOS API 进行交互。</p>
+</blockquote>
+<p>所以，对于窗口管理功能而言，使用Hammerspoon是一个非常好的选择，因为其本身是开源免费的，而且可以通过Lua脚本进行自定义，定制化的程度很高。</p>
+<h2 id="下载安装"><a href="#下载安装" class="headerlink" title="下载安装"></a>下载安装</h2><p>软件的下载可以在其<a target="_blank" rel="noopener" href="https://www.hammerspoon.org/">官网</a>下载。</p>
+<p><img src="https://s2.loli.net/2024/11/06/znmAKTgJMqUQ6sR.png" alt="下载"></p>
+<p>下载下来后是一个压缩包，直接解压得到可执行软件，然后将其拖入到 <code>/Applications</code> 目录下即可。</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>双击软件打开软件，会在Mac状态栏有一个小锤子的图标，点击图标弹出菜单，然后选择 <code>Open Config</code> 菜单，打开配置文件。<br><img src="https://s2.loli.net/2024/11/06/yZcKoExG6whftC8.png"></p>
+<p>配置文件内容大致如下：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="built_in">require</span> <span class="string">&quot;window-management&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">reloadConfig</span><span class="params">(files)</span></span></span><br><span class="line">  <span class="keyword">local</span> doReload = <span class="literal">false</span></span><br><span class="line">  <span class="keyword">for</span> _,file <span class="keyword">in</span> <span class="built_in">pairs</span>(files) <span class="keyword">do</span></span><br><span class="line">    <span class="keyword">if</span> file:<span class="built_in">sub</span>(<span class="number">-4</span>) == <span class="string">&quot;.lua&quot;</span> <span class="keyword">then</span></span><br><span class="line">      doReload = <span class="literal">true</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">if</span> doReload <span class="keyword">then</span></span><br><span class="line">    hs.reload()</span><br><span class="line">    hs.alert.show(<span class="string">&#x27;Config Reloaded&#x27;</span>)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">hs.pathwatcher.new(<span class="built_in">os</span>.<span class="built_in">getenv</span>(<span class="string">&quot;HOME&quot;</span>) .. <span class="string">&quot;/.hammerspoon/&quot;</span>, reloadConfig):start()</span><br><span class="line"></span><br><span class="line">hs.hotkey.bind(&#123;<span class="string">&quot;cmd&quot;</span>, <span class="string">&quot;alt&quot;</span>, <span class="string">&quot;shift&quot;</span>&#125;, <span class="string">&quot;r&quot;</span>, <span class="function"><span class="keyword">function</span><span class="params">()</span></span></span><br><span class="line">  hs.reload()</span><br><span class="line"><span class="keyword">end</span>)</span><br><span class="line">hs.alert.show(<span class="string">&quot;Config loaded&quot;</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这是我的配置文件，其中 <code>require &quot;window-management&quot;</code> 是引入了一个名为 <code>window-management</code> 的lua脚本，这个脚本是和init.lua脚本一个目录，具体位置在 <code>~/.hammerspoon/</code>，它可以让我们实现窗口管理的功能。</p>
+<h2 id="创建管理窗口的脚本"><a href="#创建管理窗口的脚本" class="headerlink" title="创建管理窗口的脚本"></a>创建管理窗口的脚本</h2><p>具体的<code>window-management.lua</code>脚本内容如下：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- -----------------------------------------------------------------------</span></span><br><span class="line"><span class="comment">--                         ** Something Global **                       --</span></span><br><span class="line"><span class="comment">-- -----------------------------------------------------------------------</span></span><br><span class="line">  <span class="comment">-- Uncomment this following line if you don&#x27;t wish to see animations</span></span><br><span class="line">hs.window.animationDuration = <span class="number">0</span></span><br><span class="line">grid = <span class="built_in">require</span> <span class="string">&quot;hs.grid&quot;</span></span><br><span class="line">grid.setMargins(<span class="string">&#x27;0, 0&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- Set screen watcher, in case you connect a new monitor, or unplug a monitor</span></span><br><span class="line">screens = &#123;&#125;</span><br><span class="line"><span class="keyword">local</span> screenwatcher = hs.screen.watcher.new(<span class="function"><span class="keyword">function</span><span class="params">()</span></span></span><br><span class="line">  screens = hs.screen.allScreens()</span><br><span class="line"><span class="keyword">end</span>)</span><br><span class="line">screenwatcher:start()</span><br><span class="line"></span><br><span class="line"><span class="comment">-- Set screen grid depending on resolution</span></span><br><span class="line">  <span class="comment">-- <span class="doctag">TODO:</span> set grid according to pixels</span></span><br><span class="line"><span class="keyword">for</span> _index,screen <span class="keyword">in</span> <span class="built_in">pairs</span>(hs.screen.allScreens()) <span class="keyword">do</span></span><br><span class="line">  <span class="keyword">if</span> screen:frame().w / screen:frame().h &gt; <span class="number">2</span> <span class="keyword">then</span></span><br><span class="line">    <span class="comment">-- 10 * 4 for ultra wide screen</span></span><br><span class="line">    grid.setGrid(<span class="string">&#x27;10 * 4&#x27;</span>, screen)</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="keyword">if</span> screen:frame().w &lt; screen:frame().h <span class="keyword">then</span></span><br><span class="line">      <span class="comment">-- 4 * 8 for vertically aligned screen</span></span><br><span class="line">      grid.setGrid(<span class="string">&#x27;4 * 8&#x27;</span>, screen)</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      <span class="comment">-- 8 * 4 for normal screen</span></span><br><span class="line">      grid.setGrid(<span class="string">&#x27;8 * 4&#x27;</span>, screen)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- Some constructors, just for programming</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Cell</span><span class="params">(x, y, w, h)</span></span></span><br><span class="line">  <span class="keyword">return</span> hs.geometry(x, y, w, h)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- Please leave a comment if you have any suggestions</span></span><br><span class="line"><span class="comment">-- I know this looks weird, but it works :C</span></span><br><span class="line">current = &#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">init</span><span class="params">()</span></span></span><br><span class="line">  current.win = hs.window.focusedWindow()</span><br><span class="line">  current.scr = hs.window.focusedWindow():screen()</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">current:new</span><span class="params">()</span></span></span><br><span class="line">  init()</span><br><span class="line">  o = &#123;&#125;</span><br><span class="line">  <span class="built_in">setmetatable</span>(o, <span class="built_in">self</span>)</span><br><span class="line">  o.window, o.screen = <span class="built_in">self</span>.win, <span class="built_in">self</span>.scr</span><br><span class="line">  o.screenGrid = grid.getGrid(<span class="built_in">self</span>.scr)</span><br><span class="line">  o.windowGrid = grid.get(<span class="built_in">self</span>.win)</span><br><span class="line">  <span class="keyword">return</span> o</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- -----------------------------------------------------------------------</span></span><br><span class="line"><span class="comment">--                   ** ALERT: GEEKS ONLY, GLHF  :C **                  --</span></span><br><span class="line"><span class="comment">--            ** Keybinding configurations locate at bottom **          --</span></span><br><span class="line"><span class="comment">-- -----------------------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">maximizeWindow</span><span class="params">()</span></span></span><br><span class="line">  <span class="keyword">local</span> this = current:new()</span><br><span class="line">  hs.grid.maximizeWindow(this.window)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">centerOnScreen</span><span class="params">()</span></span></span><br><span class="line">  <span class="keyword">local</span> this = current:new()</span><br><span class="line">  this.window:centerOnScreen(this.screen)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">leftHalf</span><span class="params">()</span></span></span><br><span class="line">  <span class="keyword">local</span> this = current:new()</span><br><span class="line">  <span class="keyword">local</span> cell = Cell(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0.5</span> * this.screenGrid.w, this.screenGrid.h)</span><br><span class="line">  grid.set(this.window, cell, this.screen)</span><br><span class="line">  this.window.setShadows(<span class="literal">true</span>)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">rightHalf</span><span class="params">()</span></span></span><br><span class="line">  <span class="keyword">local</span> this = current:new()</span><br><span class="line">  <span class="keyword">local</span> cell = Cell(<span class="number">0.5</span> * this.screenGrid.w, <span class="number">0</span>, <span class="number">0.5</span> * this.screenGrid.w, this.screenGrid.h)</span><br><span class="line">  grid.set(this.window, cell, this.screen)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">topHalf</span><span class="params">()</span></span></span><br><span class="line">  <span class="keyword">local</span> this = current:new()</span><br><span class="line">  <span class="keyword">local</span> cell = Cell(<span class="number">0</span>, <span class="number">0</span>, this.screenGrid.w, <span class="number">0.5</span> * this.screenGrid.h)</span><br><span class="line">  grid.set(this.window, cell, this.screen)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">bottomHalf</span><span class="params">()</span></span></span><br><span class="line">  <span class="keyword">local</span> this = current:new()</span><br><span class="line">  <span class="keyword">local</span> cell = Cell(<span class="number">0</span>, <span class="number">0.5</span> * this.screenGrid.h, this.screenGrid.w, <span class="number">0.5</span> * this.screenGrid.h)</span><br><span class="line">  grid.set(this.window, cell, this.screen)</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">rightToLeft</span><span class="params">()</span></span></span><br><span class="line">  <span class="keyword">local</span> this = current:new()</span><br><span class="line">  <span class="keyword">local</span> cell = Cell(this.windowGrid.x, this.windowGrid.y, this.windowGrid.w - <span class="number">1</span>, this.windowGrid.h)</span><br><span class="line">  <span class="keyword">if</span> this.windowGrid.w &gt; <span class="number">1</span> <span class="keyword">then</span></span><br><span class="line">    grid.set(this.window, cell, this.screen)</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    hs.alert.show(<span class="string">&quot;Small Enough :)&quot;</span>)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">rightToRight</span><span class="params">()</span></span></span><br><span class="line">  <span class="keyword">local</span> this = current:new()</span><br><span class="line">  <span class="keyword">local</span> cell = Cell(this.windowGrid.x, this.windowGrid.y, this.windowGrid.w + <span class="number">1</span>, this.windowGrid.h)</span><br><span class="line">  <span class="keyword">if</span> this.windowGrid.w &lt; this.screenGrid.w - this.windowGrid.x <span class="keyword">then</span></span><br><span class="line">    grid.set(this.window, cell, this.screen)</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    hs.alert.show(<span class="string">&quot;Touching Right Edge :|&quot;</span>)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">bottomUp</span><span class="params">()</span></span></span><br><span class="line">  <span class="keyword">local</span> this = current:new()</span><br><span class="line">  <span class="keyword">local</span> cell = Cell(this.windowGrid.x, this.windowGrid.y, this.windowGrid.w, this.windowGrid.h - <span class="number">1</span>)</span><br><span class="line">  <span class="keyword">if</span> this.windowGrid.h &gt; <span class="number">1</span> <span class="keyword">then</span></span><br><span class="line">    grid.set(this.window, cell, this.screen)</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    hs.alert.show(<span class="string">&quot;Small Enough :)&quot;</span>)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">bottomDown</span><span class="params">()</span></span></span><br><span class="line">  <span class="keyword">local</span> this = current:new()</span><br><span class="line">  <span class="keyword">local</span> cell = Cell(this.windowGrid.x, this.windowGrid.y, this.windowGrid.w, this.windowGrid.h + <span class="number">1</span>)</span><br><span class="line">  <span class="keyword">if</span> this.windowGrid.h &lt; this.screenGrid.h - this.windowGrid.y <span class="keyword">then</span></span><br><span class="line">    grid.set(this.window, cell, this.screen)</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    hs.alert.show(<span class="string">&quot;Touching Bottom Edge :|&quot;</span>)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">leftToLeft</span><span class="params">()</span></span></span><br><span class="line">  <span class="keyword">local</span> this = current:new()</span><br><span class="line">  <span class="keyword">local</span> cell = Cell(this.windowGrid.x - <span class="number">1</span>, this.windowGrid.y, this.windowGrid.w + <span class="number">1</span>, this.windowGrid.h)</span><br><span class="line">  <span class="keyword">if</span> this.windowGrid.x &gt; <span class="number">0</span> <span class="keyword">then</span></span><br><span class="line">    grid.set(this.window, cell, this.screen)</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    hs.alert.show(<span class="string">&quot;Touching Left Edge :|&quot;</span>)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">leftToRight</span><span class="params">()</span></span></span><br><span class="line">  <span class="keyword">local</span> this = current:new()</span><br><span class="line">  <span class="keyword">local</span> cell = Cell(this.windowGrid.x + <span class="number">1</span>, this.windowGrid.y, this.windowGrid.w - <span class="number">1</span>, this.windowGrid.h)</span><br><span class="line">  <span class="keyword">if</span> this.windowGrid.w &gt; <span class="number">1</span> <span class="keyword">then</span></span><br><span class="line">    grid.set(this.window, cell, this.screen)</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    hs.alert.show(<span class="string">&quot;Small Enough :)&quot;</span>)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">topUp</span><span class="params">()</span></span></span><br><span class="line">  <span class="keyword">local</span> this = current:new()</span><br><span class="line">  <span class="keyword">local</span> cell = Cell(this.windowGrid.x, this.windowGrid.y - <span class="number">1</span>, this.windowGrid.w, this.windowGrid.h + <span class="number">1</span>)</span><br><span class="line">  <span class="keyword">if</span> this.windowGrid.y &gt; <span class="number">0</span> <span class="keyword">then</span></span><br><span class="line">    grid.set(this.window, cell, this.screen)</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    hs.alert.show(<span class="string">&quot;Touching Top Edge :|&quot;</span>)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">topDown</span><span class="params">()</span></span></span><br><span class="line">  <span class="keyword">local</span> this = current:new()</span><br><span class="line">  <span class="keyword">local</span> cell = Cell(this.windowGrid.x, this.windowGrid.y + <span class="number">1</span>, this.windowGrid.w, this.windowGrid.h - <span class="number">1</span>)</span><br><span class="line">  <span class="keyword">if</span> this.windowGrid.h &gt; <span class="number">1</span> <span class="keyword">then</span></span><br><span class="line">    grid.set(this.window, cell, this.screen)</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    hs.alert.show(<span class="string">&quot;Small Enough :)&quot;</span>)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- -----------------------------------------------------------------------</span></span><br><span class="line"><span class="comment">--                           ** Key Binding **                          --</span></span><br><span class="line"><span class="comment">-- -----------------------------------------------------------------------</span></span><br><span class="line">hk = <span class="built_in">require</span> <span class="string">&quot;hs.hotkey&quot;</span></span><br><span class="line"><span class="comment">-- * Key Binding Utility</span></span><br><span class="line"><span class="comment">--- Bind hotkey for window management.</span></span><br><span class="line"><span class="comment">-- @function windowBind</span></span><br><span class="line"><span class="comment">-- @param &#123;table&#125; hyper - hyper key set</span></span><br><span class="line"><span class="comment">-- @param &#123; ...&#123;key=value&#125; &#125; keyFuncTable - multiple hotkey and function pairs</span></span><br><span class="line"><span class="comment">--   @key &#123;string&#125; hotkey</span></span><br><span class="line"><span class="comment">--   @value &#123;function&#125; callback function</span></span><br><span class="line"><span class="keyword">local</span> <span class="function"><span class="keyword">function</span> <span class="title">windowBind</span><span class="params">(hyper, keyFuncTable)</span></span></span><br><span class="line">  <span class="keyword">for</span> key,fn <span class="keyword">in</span> <span class="built_in">pairs</span>(keyFuncTable) <span class="keyword">do</span></span><br><span class="line">    hk.bind(hyper, key, fn)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">-- * Set Window Position on screen</span></span><br><span class="line"><span class="comment">-- windowBind(&#123;&quot;shift&quot;, &quot;alt&quot;, &quot;cmd&quot;&#125;, &#123;</span></span><br><span class="line">windowBind(&#123;<span class="string">&quot;ctrl&quot;</span>, <span class="string">&quot;alt&quot;</span>, <span class="string">&quot;cmd&quot;</span>&#125;, &#123;</span><br><span class="line">  m = maximizeWindow,    <span class="comment">-- ⌃⌥⌘ + M</span></span><br><span class="line">  n = grid.pushWindowNextScreen,</span><br><span class="line">  h = hs.hints.windowHints,</span><br><span class="line">  c = centerOnScreen,    <span class="comment">-- ⌃⌥⌘ + C</span></span><br><span class="line">  left = leftHalf,       <span class="comment">-- ⌃⌥⌘ + ←</span></span><br><span class="line">  right = rightHalf,     <span class="comment">-- ⌃⌥⌘ + →</span></span><br><span class="line">  up = topHalf,          <span class="comment">-- ⌃⌥⌘ + ↑</span></span><br><span class="line">  down = bottomHalf      <span class="comment">-- ⌃⌥⌘ + ↓</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">-- * Set Window Position on screen</span></span><br><span class="line"><span class="comment">-- windowBind(&#123;&quot;shift&quot;,&quot;alt&quot;&#125;, &#123;</span></span><br><span class="line">windowBind(&#123;<span class="string">&quot;ctrl&quot;</span>,<span class="string">&quot;alt&quot;</span>&#125;, &#123;</span><br><span class="line">  left = leftToLeft,</span><br><span class="line">  right = leftToRight,</span><br><span class="line">  up = topUp,</span><br><span class="line">  down = topDown</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- * Set Window Position on screen</span></span><br><span class="line">windowBind(&#123;<span class="string">&quot;alt&quot;</span>,<span class="string">&quot;cmd&quot;</span>&#125;, &#123;</span><br><span class="line">  left = rightToLeft,</span><br><span class="line">  right = rightToRight,</span><br><span class="line">  up = bottomUp,</span><br><span class="line">  down = bottomDown</span><br><span class="line">&#125;);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这个脚本实现了完整的窗口管理功能，包括最大化窗口、居中窗口、移动窗口、调整窗口大小等功能。<br>上面是定义了一些窗口管理的函数，然后通过绑定快捷键的方式来调用这些函数，从而实现窗口管理的功能。</p>
+<p>比如<code>ctrl+cmd+alt+left</code>可以将当前窗口移动到左边，<code>ctrl+cmd+alt+right</code>可以将当前窗口移动到右边，<code>ctrl+cmd+alt+up</code>可以将当前窗口移动到上边，<code>ctrl+cmd+alt+down</code>可以将当前窗口移动到下边，<code>ctrl+cmd+alt+m</code>可以将当前窗口最大化，<code>ctrl+cmd+alt+c</code>可以将当前窗口居中。</p>
+<p>将以上代码保存到 <code>window-management.lua</code> 文件中，然后重启Hammerspoon即可通过快捷键来实现窗口管理的功能。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Hammerspoon是一个非常强大的MacOS自动化工具，窗口管理只是其中一个简单的功能，可以通过Hammerspoon实现更多的自动化功能，比如自动打开浏览器、自动打开终端、自动打开VSCode等。</p>
+<p>有代码基础的同学可以参考<a target="_blank" rel="noopener" href="https://www.hammerspoon.org/go/">官方文档</a>，来编写自己的脚本，实现自己的自动化功能。</p>
+<p>或者可以在GitHub上搜索Hammerspoon的插件，来实现更多的自动化功能。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%BD%AF%E4%BB%B6/" rel="tag"># 软件</a>
+              <a href="/tags/%E6%95%88%E7%8E%87/" rel="tag"># 效率</a>
+              <a href="/tags/%E7%AA%97%E5%8F%A3%E7%AE%A1%E7%90%86/" rel="tag"># 窗口管理</a>
+              <a href="/tags/mac%E8%BD%AF%E4%BB%B6/" rel="tag"># mac软件</a>
+              <a href="/tags/%E5%85%8D%E8%B4%B9%E8%BD%AF%E4%BB%B6/" rel="tag"># 免费软件</a>
+              <a href="/tags/%E5%BC%80%E6%BA%90/" rel="tag"># 开源</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/11/06/%E4%BD%BF%E7%94%A8cloudflare%E5%92%8Ctelegraph-image%E6%90%AD%E5%BB%BA%E5%85%8D%E8%B4%B9%E6%97%A0%E9%99%90%E7%9A%84%E5%9B%BE%E5%BA%8A/" rel="prev" title="使用cloudflare和telegraph-image搭建免费无限的图床">
+      <i class="fa fa-chevron-left"></i> 使用cloudflare和telegraph-image搭建免费无限的图床
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/11/07/ffmpeg%E5%81%9A%E4%B8%80%E4%BA%9B%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81/" rel="next" title="ffmpeg做一些有意思的直播推流">
+      ffmpeg做一些有意思的直播推流 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFHammerspoon"><span class="nav-number">1.</span> <span class="nav-text">什么是Hammerspoon</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">下载安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">3.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%90%86%E7%AA%97%E5%8F%A3%E7%9A%84%E8%84%9A%E6%9C%AC"><span class="nav-number">4.</span> <span class="nav-text">创建管理窗口的脚本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">coolcaosj</p>
+  <div class="site-description" itemprop="description">分享好玩的，有趣的，有用东西</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcaosj</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/asciinema.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

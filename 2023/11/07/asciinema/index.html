@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/asciinema.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="asciinema是一个开源的终端录屏软件，它可以让我们在终端中录制和分享我们的操作，并且可以将录制的内容导出为文本文件或者视频文件。这对于我们在终端中进行的操作进行记录和分享非常有用，比如我们在终端中进行一些操作，然后想分享给别人，但是又不想让别人看到我们的操作，那么就可以使用asciinema来录制我们的操作，然后将录制的内容导出为文本文件或者视频文件，然后将文本文件或者视频文件分享给别人。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="asciinema">
+<meta property="og:url" content="http://example.com/2023/11/07/asciinema/index.html">
+<meta property="og:site_name" content="技多不压身">
+<meta property="og:description" content="asciinema是一个开源的终端录屏软件，它可以让我们在终端中录制和分享我们的操作，并且可以将录制的内容导出为文本文件或者视频文件。这对于我们在终端中进行的操作进行记录和分享非常有用，比如我们在终端中进行一些操作，然后想分享给别人，但是又不想让别人看到我们的操作，那么就可以使用asciinema来录制我们的操作，然后将录制的内容导出为文本文件或者视频文件，然后将文本文件或者视频文件分享给别人。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2024/11/07/vWlBgunUxhe2H7Q.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/07/wY4uJUFL9kl5NZg.png">
+<meta property="og:image" content="https://s2.loli.net/2024/11/07/piZVoDU3hktySq5.gif">
+<meta property="article:published_time" content="2023-11-07T03:27:32.000Z">
+<meta property="article:modified_time" content="2024-11-29T14:19:52.778Z">
+<meta property="article:author" content="coolcaosj">
+<meta property="article:tag" content="软件">
+<meta property="article:tag" content="免费软件">
+<meta property="article:tag" content="开源">
+<meta property="article:tag" content="终端工具">
+<meta property="article:tag" content="录屏">
+<meta property="article:tag" content="asciinema">
+<meta property="article:tag" content="终端录制">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2024/11/07/vWlBgunUxhe2H7Q.png">
+
+<link rel="canonical" href="http://example.com/2023/11/07/asciinema/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>asciinema | 技多不压身</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">技多不压身</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">分享，记录，总结</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/07/asciinema/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="coolcaosj">
+      <meta itemprop="description" content="分享好玩的，有趣的，有用东西">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="技多不压身">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          asciinema
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-11-07 11:27:32" itemprop="dateCreated datePublished" datetime="2023-11-07T11:27:32+08:00">2023-11-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-11-29 22:19:52" itemprop="dateModified" datetime="2024-11-29T22:19:52+08:00">2024-11-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%BD%AF%E4%BB%B6%E6%8E%A8%E8%8D%90/" itemprop="url" rel="index"><span itemprop="name">软件推荐</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="https://s2.loli.net/2024/11/07/vWlBgunUxhe2H7Q.png"></p>
+<p>asciinema是一个开源的终端录屏软件，它可以让我们在终端中录制和分享我们的操作，并且可以将录制的内容导出为文本文件或者视频文件。<br>这对于我们在终端中进行的操作进行记录和分享非常有用，比如我们在终端中进行一些操作，然后想分享给别人，但是又不想让别人看到我们的操作，那么就可以使用asciinema来录制我们的操作，然后将录制的内容导出为文本文件或者视频文件，然后将文本文件或者视频文件分享给别人。</p>
+<span id="more"></span>
+
+<h2 id="下载安装"><a href="#下载安装" class="headerlink" title="下载安装"></a>下载安装</h2><p>asciinema的下载可以在其<a target="_blank" rel="noopener" href="https://docs.asciinema.org/">官网</a>根据文档进行安装。<br>不同的系统有不同的安装方式，这里我以Mac系统为例进行安装，其他系统可以参照官方文档进行安装。</p>
+<p>Mac系统使用homebrew进行安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install asciinema</span><br></pre></td></tr></table></figure>
+
+<p>安装完成后，可以通过命令<code>asciinema --version</code>来查看是否安装成功。如果安装成功，会显示asciinema的版本号。</p>
+<p><img src="https://s2.loli.net/2024/11/07/wY4uJUFL9kl5NZg.png"></p>
+<h2 id="终端录屏"><a href="#终端录屏" class="headerlink" title="终端录屏"></a>终端录屏</h2><p>asciinema的使用非常简单，只需要在终端中输入<code>asciinema rec demo.cast</code>命令即可开始录屏，然后按照提示进行操作，操作完成后，按下<code>Ctrl + D</code>即可停止录屏。</p>
+<p>录制的内容会保存为<code>demo.cast</code>文件，这个文件可以通过asciinema的命令<code>asciinema play demo.cast</code>来播放。</p>
+<p>或者使用官方的web播放器<code>asciinema-player</code>集成到网页中进行播放。</p>
+<p>下面就是一个使用asciinema-player播放的示例：(点击▶️开始播放)</p>
+<p><asciinema-player src="/resources/cast/demo.cast" preload="ture"   poster="npt:0:30"></asciinema-player></p>
+<h2 id="分享上传"><a href="#分享上传" class="headerlink" title="分享上传"></a>分享上传</h2><p>asciinema的录屏内容可以通过asciinema的官方网站进行分享和上传，也可以通过asciinema的命令<code>asciinema upload demo.cast</code>来上传。</p>
+<p>但这里不建议上传到asciinema的官方网站，因为录制的内容可能包含个人隐私数据，如果只是想分享给别人，可以导出gif图片然后将图片分享给特定的人即可。</p>
+<h2 id="导出gif"><a href="#导出gif" class="headerlink" title="导出gif"></a>导出gif</h2><p>要将录制的<code>.cast</code>文件导出为<code>.gif</code>文件，需要安装 <code>agg</code> 工具。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install agg</span><br></pre></td></tr></table></figure>
+
+<p>然后使用以下命令将<code>.cast</code>文件导出为<code>.gif</code>文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">agg demo.cast demo.gif</span><br></pre></td></tr></table></figure>
+<p>下面为导出gif图片的效果：<br><img src="https://s2.loli.net/2024/11/07/piZVoDU3hktySq5.gif"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>之所以使用asciinema录制终端，而不是使用其他录屏软件，是因为asciinema可以将终端操作完整记录下来，而且可以使用 <code>asciinema play</code> 来回放录制的内容，最最重要的是 <strong>在终端回放时，可以使用鼠标进行框选，并可以复制其中的文本和命令</strong>，这对于我们在终端中进行的操作进行记录和分享非常有用。</p>
+<p>有了这个工具，我们在做一些终端方面的教程时，就可以方便的将操作录制下来，只需要将 <code>.cast</code> 分享给别人，或者直接将 <code>.cast</code> 内嵌到网页中进行播放。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%BD%AF%E4%BB%B6/" rel="tag"># 软件</a>
+              <a href="/tags/%E5%85%8D%E8%B4%B9%E8%BD%AF%E4%BB%B6/" rel="tag"># 免费软件</a>
+              <a href="/tags/%E5%BC%80%E6%BA%90/" rel="tag"># 开源</a>
+              <a href="/tags/%E7%BB%88%E7%AB%AF%E5%B7%A5%E5%85%B7/" rel="tag"># 终端工具</a>
+              <a href="/tags/%E5%BD%95%E5%B1%8F/" rel="tag"># 录屏</a>
+              <a href="/tags/asciinema/" rel="tag"># asciinema</a>
+              <a href="/tags/%E7%BB%88%E7%AB%AF%E5%BD%95%E5%88%B6/" rel="tag"># 终端录制</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/11/07/ffmpeg%E5%81%9A%E4%B8%80%E4%BA%9B%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81/" rel="prev" title="ffmpeg做一些有意思的直播推流">
+      <i class="fa fa-chevron-left"></i> ffmpeg做一些有意思的直播推流
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/11/18/%E5%9F%BA%E4%BA%8Ecloudflare%E5%92%8Csink%E6%9E%84%E5%BB%BA%E5%B1%9E%E4%BA%8E%E8%87%AA%E5%B7%B1%E7%9A%84%E7%9F%AD%E9%93%BE%E7%B3%BB%E7%BB%9F/" rel="next" title="基于cloudflare和sink构建属于自己的短链系统">
+      基于cloudflare和sink构建属于自己的短链系统 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">下载安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%88%E7%AB%AF%E5%BD%95%E5%B1%8F"><span class="nav-number">2.</span> <span class="nav-text">终端录屏</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E4%BA%AB%E4%B8%8A%E4%BC%A0"><span class="nav-number">3.</span> <span class="nav-text">分享上传</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%BC%E5%87%BAgif"><span class="nav-number">4.</span> <span class="nav-text">导出gif</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">coolcaosj</p>
+  <div class="site-description" itemprop="description">分享好玩的，有趣的，有用东西</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coolcaosj</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/asciinema.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
